@@ -32,7 +32,7 @@ class BaldDataset(data.Dataset):
 
     def __getitem__(self, index):
         img_path = self.image_list[index]
-        label = 0 if img_path.split('\\')[-2] == 'Bald' else 1
+        label = 0 if img_path.split('/')[-2] == 'Bald' else 1
         img_data = Image.open(img_path)
         img_data = self.transforms(img_data)
         return img_data, label

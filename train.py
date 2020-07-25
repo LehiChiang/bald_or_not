@@ -4,26 +4,32 @@ import time
 import torch as t
 from torch.autograd import Variable
 from torch.nn import CrossEntropyLoss
+import torch.nn as nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from config import DefaultConfig
 from data.dataset import BaldDataset
-from models.resnet import resnet50
+import models
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 device = t.device("cuda" if t.cuda.is_available() else "cpu")
+print(device, 'is available!')
 opt = DefaultConfig()
-model = resnet50()
+model = getattr(models, opt.model)()
+print(model)
 criterion = CrossEntropyLoss()
 
 def train(**kwargs):
+    print(opt.configs)
     # model
     global model
     if opt.load_model_path:
         model.load_state_dict(t.load(opt.load_model_path))
-    if opt.use_gpu: model.cuda()
+    #t.distributed.init_process_group(backend='nccl')
+    model.to(device)
+    #model = nn.parallel.DistributedDataParallel(model)
 
     # data
     train_data = BaldDataset(opt.train_data_root)
@@ -37,7 +43,8 @@ def train(**kwargs):
     #Loss function & optimizer
     lr = opt.lr
     optimizer = Adam(model.parameters(), lr=lr, weight_decay=opt.weight_decay)
-
+    
+    print('Starting training......')
     #train
     for epoch in range(opt.max_epoch):
         print('Epoch {}/{} :'.format(epoch, opt.max_epoch))
@@ -46,19 +53,14 @@ def train(**kwargs):
         loader = tqdm(train_dataloader)
         train_loss, loss_meter, it_count, correct = 0, 0, 0, 0
         # train epoch
-        for batch_i, (data, label) in enumerate(loader):
-            input = Variable(data)
-            target = Variable(label)
-            if opt.use_gpu:
-                input.cuda()
-                target.cuda()
+        for batch_i, (data, label) in enumerate(loader): 
+            input = Variable(data).to(device)
+            target = Variable(label).to(device)
             optimizer.zero_grad()
             predict = model(input)
             loss = criterion(predict, target)
             loss.backward()
             optimizer.step()
-
-            loader.set_description("Training")
 
             loss_meter += loss.item()
             it_count += 1
@@ -72,8 +74,7 @@ def train(**kwargs):
         train_loss = loss_meter / len(train_dataloader.dataset)
         train_acc = correct.cpu().detach().numpy() * 1.0 / len(train_dataloader.dataset)
 
-        print('#epoch: %02d, train_loss: %.3e, train_acc: %.3f time: %dm%ds'
-              % (epoch, train_loss, train_acc, time_elapsed // 60, time_elapsed % 60))
+        print('train_loss: %.3f, train_acc: %.3f' % (train_loss, train_acc))
 
         # validation
         if epoch % opt.evaluation_interval == 0:
@@ -113,16 +114,12 @@ def val(args=None):
 
         val_loss = loss_meter / len(val_data)
         val_acc = correct.cpu().detach().numpy() * 1.0 / len(val_dataloader.dataset)
-        print("Val loss: %.3e, Val Acc: %.3f \n" % (val_loss, val_acc))
+        print("val_loss: %.3f, val_acc: %.3f \n" % (val_loss, val_acc))
 
     return val_loss, val_acc
 
 
 if __name__ == '__main__':
-    # os.makedirs("output", exist_ok=True)
-    # os.makedirs("checkpoints", exist_ok=True)
+    os.makedirs("output", exist_ok=True)
+    os.makedirs("checkpoints", exist_ok=True)
     train()
-    # bar = tqdm(["a", "b", "c", "d"])
-    # for char in bar:
-    #     bar.set_description("Processing %s" % char)
-    #     time.sleep(1)

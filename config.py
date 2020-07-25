@@ -5,7 +5,8 @@ class DefaultConfig:
     def __init__(self):
         self._configs = dict()
         self._configs['env'] = None  # visdom环境
-        self._configs['model'] = 'AlexNet'  # 使用的模型，名字必须与models/__init__.py里的名字一致
+        self._configs['model'] = 'resnet18'  # 使用的模型，名字必须与models/__init__.py里的名字一致
+        #  'resnet18', 'resnet34', 'resnet50', 'resnet101','resnet152'
 
         # Directories
         self._configs['train_data_root'] = 'data/bald/Train'  # 训练集存放路径
@@ -14,14 +15,14 @@ class DefaultConfig:
         self._configs['load_model_path'] = None  # 'checkpoints/model.pth'加载预训练模型的路径，None表示不预训练
 
         # Training Config
-        self._configs['batch_size'] = 1
-        self._configs['use_gpu'] = False
+        self._configs['batch_size'] = 4
+        self._configs['use_gpu'] = True
         self._configs['num_workers'] = 0
         self._configs['max_epoch'] = 10
         self._configs['lr'] = 0.1
         self._configs['lr_decay'] = 0.95
         self._configs['weight_decay'] = 1e-4
-        self._configs['checkpoint_interval'] = 1
+        self._configs['checkpoint_interval'] = 5
         self._configs['evaluation_interval'] = 1
 
         # Test Config
@@ -39,9 +40,9 @@ class DefaultConfig:
             if not k.startswith('__'):
                 print(k, ':', getattr(self, k))
 
-    # @property
-    # def configs(self):
-    #     return self._configs
+    @property
+    def configs(self):
+        return self._configs
 
     @property
     def env(self):
