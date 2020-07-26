@@ -33,11 +33,10 @@ def test():
         for inputs, target in test_dataloader:
             inputs = inputs.to(device)
             target = target.to(device)
-            print('target:', target)
+            print('target:', target.tolist())
             output = model(inputs)
-            print('output:', output)
             pred = t.relu(output).data.max(1)[1]
-            print('pred:', pred)
+            print('prediction:', pred.tolist())
             correct += pred.eq(target.data).sum()
             print('------------------------------')
         test_acc = correct.cpu().detach().numpy() * 1.0 / len(test_dataloader.dataset)
