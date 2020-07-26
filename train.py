@@ -65,7 +65,7 @@ def train(**kwargs):
             loss_meter += loss.item()
             it_count += 1
 
-            logits = t.sigmoid(predict)
+            logits = t.relu(predict)
             pred = logits.data.max(1)[1]
             correct += pred.eq(target.data).sum()
         # ending of train epoch
@@ -108,7 +108,7 @@ def val(args=None):
             loss = criterion(output, target)
             loss_meter += loss.item()
 
-            logits = t.sigmoid(output)
+            logits = t.relu(output)
             pred = logits.data.max(1)[1]
             correct += pred.eq(target.data).sum()
 
