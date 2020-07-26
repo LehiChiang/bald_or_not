@@ -12,17 +12,16 @@ class DefaultConfig:
         self._configs['train_data_root'] = 'data/bald/Train'  # 训练集存放路径
         self._configs['test_data_root'] = 'data/bald/Test'  # 测试集存放路径
         self._configs['val_data_root'] = 'data/bald/Validation'  # 验证集存放路径
-        self._configs['load_model_path'] = None  # 'checkpoints/model.pth'加载预训练模型的路径，None表示不预训练
+        self._configs['load_model_path'] = None  # 'model_data/model.pth'加载预训练模型的路径，None表示不预训练
 
         # Training Config
         self._configs['batch_size'] = 4
-        self._configs['use_gpu'] = True
         self._configs['num_workers'] = 0
         self._configs['max_epoch'] = 10
-        self._configs['lr'] = 0.1
+        self._configs['lr'] = 0.01
         self._configs['lr_decay'] = 0.95
         self._configs['weight_decay'] = 1e-4
-        self._configs['checkpoint_interval'] = 5
+        self._configs['checkpoint_interval'] = 1
         self._configs['evaluation_interval'] = 1
 
         # Test Config

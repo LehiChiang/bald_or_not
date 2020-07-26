@@ -18,7 +18,6 @@ device = t.device("cuda" if t.cuda.is_available() else "cpu")
 print(device, 'is available!')
 opt = DefaultConfig()
 model = getattr(models, opt.model)()
-print(model)
 criterion = CrossEntropyLoss()
 
 def train(**kwargs):
@@ -81,7 +80,7 @@ def train(**kwargs):
             val_loss, val_acc = val()
 
         if epoch % opt.checkpoint_interval == 0:
-            model.save(f"checkpoints/%s_ckpt_%d.pth" % model.model_name, epoch)
+            model.save('%s_ckpt_%d.pth' % getattr(models, opt.model), epoch)
 
 
 def val(args=None):
@@ -122,4 +121,5 @@ def val(args=None):
 if __name__ == '__main__':
     os.makedirs("output", exist_ok=True)
     os.makedirs("checkpoints", exist_ok=True)
+    os.makedirs("model_data", exist_ok=True)
     train()

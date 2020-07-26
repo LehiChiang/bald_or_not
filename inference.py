@@ -1,6 +1,5 @@
 import torch as t
 import os
-
 from torch.utils.data import DataLoader
 
 from config import DefaultConfig
@@ -15,7 +14,7 @@ def test():
     }
     device = t.device("cuda" if t.cuda.is_available() else "cpu")
     opt = DefaultConfig()
-    model = getattr(models, opt.model)()
+    model = getattr(models, opt.model)().eval()
     model.load(os.path.join(os.getcwd(), test_config['model_path']))
     model.to(device)
 
@@ -28,18 +27,19 @@ def test():
                                  collate_fn=test_data.customized_collate_fn,
                                  drop_last=False)
 
-    model.eval()
     correct = 0
+    results = []
     with t.no_grad():
         for inputs, target in test_dataloader:
             inputs = inputs.to(device)
             target = target.to(device)
+            print('target:', target)
             output = model(inputs)
-
-            logits = t.relu(output)
-            pred = logits.data.max(1)[1]
+            print('output:', output)
+            pred = t.relu(output).data.max(1)[1]
+            print('pred:', pred)
             correct += pred.eq(target.data).sum()
-
+            print('------------------------------')
         test_acc = correct.cpu().detach().numpy() * 1.0 / len(test_dataloader.dataset)
         print("test_acc: %.3f \n" % test_acc)
 
