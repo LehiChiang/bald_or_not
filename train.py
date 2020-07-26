@@ -80,7 +80,7 @@ def train(**kwargs):
             val_loss, val_acc = val()
 
         if epoch % opt.checkpoint_interval == 0:
-            model.save('%s_ckpt_%d.pth' % getattr(models, opt.model), epoch)
+            model.save('%s_ckpt_%d.pth' % (getattr(models, opt.model), epoch))
 
 
 def val(args=None):
