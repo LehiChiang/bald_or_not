@@ -34,7 +34,6 @@ def train(**kwargs):
     print(config_table.table)
 
     # model
-    global model
     if opt.load_model_path:
         model.load_state_dict(t.load(opt.load_model_path))
     if t.cuda.device_count() > 1:
@@ -60,7 +59,7 @@ def train(**kwargs):
     # optimizer & lr_scheduler & early_stopping
     optimizer = Adam(model.parameters(), lr=opt.lr, weight_decay=opt.weight_decay)
     lr_scheduler = ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=3, verbose=True)
-    early_stopping = EarlyStopping(patience=10, verbose=True)
+    early_stopping = EarlyStopping(patience=10, verbose=True, path='%s_checkpoint.pth' % opt.model)
 
     train_losses, valid_losses, avg_train_losses, avg_valid_losses = [], [], [], []
 
@@ -130,7 +129,7 @@ def train(**kwargs):
 
         # early_stopping needs the validation loss to check if it has decresed,
         # and if it has, it will make a checkpoint of the current model
-        early_stopping(valid_loss, model, path='%s_checkpoint.pth' % opt.model)
+        early_stopping(valid_loss, model)
 
         if early_stopping.early_stop:
             print("Early stopping")
