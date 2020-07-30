@@ -18,7 +18,7 @@ import models
 device = t.device("cuda" if t.cuda.is_available() else "cpu")
 opt = DefaultConfig()
 model = getattr(models, opt.model)()
-criterion = CrossEntropyLoss()
+criterion = CrossEntropyLoss().to(device)
 config_data = [['Key', 'Value']]
 
 
@@ -35,8 +35,7 @@ def train(**kwargs):
     if opt.load_model_path:
         model.load_state_dict(t.load(opt.load_model_path))
     if t.cuda.device_count() > 1:
-        print("Let's use", t.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
+        model = nn.DataParallel(model, device_ids=[0, 3])
     model.to(device)
 
     # data
@@ -107,9 +106,8 @@ def val(args=None):
     global model
     if args is not None and args.ckpt is not None:
         model.load_state_dict(t.load(args.ckpt, map_location='cpu')['state_dict'])
-    if t.cuda.device_count() > 1:
-        print("Let's use", t.cuda.device_count(), "GPUs!")
-        model = nn.DataParallel(model)
+    # if t.cuda.device_count() > 1:
+    #     #     model = nn.DataParallel(model)
     model = model.to(device)
 
     model.eval()
