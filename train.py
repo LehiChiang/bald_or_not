@@ -8,6 +8,7 @@ import torch.nn as nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+from terminaltables import AsciiTable
 
 from config import DefaultConfig
 from data.dataset import BaldDataset
@@ -15,13 +16,20 @@ import models
 
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 device = t.device("cuda" if t.cuda.is_available() else "cpu")
-print(device, 'is available!')
 opt = DefaultConfig()
 model = getattr(models, opt.model)()
 criterion = CrossEntropyLoss()
+config_data = [['Key', 'Value']]
+
 
 def train(**kwargs):
-    print(opt.configs)
+
+    config_data.append(['device', device])
+    for k, v in opt.configs.items():
+        config_data.append([k, v])
+    config_table = AsciiTable(config_data)
+    print(config_table.table)
+
     # model
     global model
     if opt.load_model_path:
@@ -43,7 +51,7 @@ def train(**kwargs):
     lr = opt.lr
     optimizer = Adam(model.parameters(), lr=lr, weight_decay=opt.weight_decay)
     
-    print('Starting training......')
+    print('Starting training on %d images:' % len(train_data))
     #train
     for epoch in range(opt.max_epoch):
         print('Epoch {}/{} :'.format(epoch, opt.max_epoch))
@@ -78,9 +86,12 @@ def train(**kwargs):
         # validation
         if epoch % opt.evaluation_interval == 0:
             val_loss, val_acc = val()
+            print("val_loss: %.3f, val_acc: %.3f \n" % (val_loss, val_acc))
 
         if epoch % opt.checkpoint_interval == 0:
             model.save('%s_ckpt_%d.pth' % (getattr(models, opt.model), epoch))
+
+        print('+--------------------+--------------------+')
 
 
 def val(args=None):
@@ -100,7 +111,8 @@ def val(args=None):
     model.eval()
     loss_meter, correct = 0, 0
     with t.no_grad():
-        for inputs, target in val_dataloader:
+        print('Validating on %d images:' % len(val_data))
+        for inputs, target in tqdm(val_dataloader):
             inputs = inputs.to(device)
             target = target.to(device)
             output = model(inputs)
@@ -113,7 +125,6 @@ def val(args=None):
 
         val_loss = loss_meter / len(val_data)
         val_acc = correct.cpu().detach().numpy() * 1.0 / len(val_dataloader.dataset)
-        print("val_loss: %.3f, val_acc: %.3f \n" % (val_loss, val_acc))
 
     return val_loss, val_acc
 
