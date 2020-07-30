@@ -14,8 +14,8 @@ from config import DefaultConfig
 from data.dataset import BaldDataset
 import models
 
-#os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
-device = t.device("cuda" if t.cuda.is_available() else "cpu")
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+device = t.device("cuda:0" if t.cuda.is_available() else "cpu")
 opt = DefaultConfig()
 model = getattr(models, opt.model)()
 criterion = CrossEntropyLoss().to(device)
@@ -35,7 +35,7 @@ def train(**kwargs):
     if opt.load_model_path:
         model.load_state_dict(t.load(opt.load_model_path))
     if t.cuda.device_count() > 1:
-        model = nn.DataParallel(model, device_ids=[0, 3])
+        model = nn.DataParallel(model, device_ids=opt.device_ids)
     model.to(device)
 
     # data
@@ -106,8 +106,8 @@ def val(args=None):
     global model
     if args is not None and args.ckpt is not None:
         model.load_state_dict(t.load(args.ckpt, map_location='cpu')['state_dict'])
-    # if t.cuda.device_count() > 1:
-    #     #     model = nn.DataParallel(model)
+    if t.cuda.device_count() > 1:
+        model = nn.DataParallel(model, device_ids=[0])
     model = model.to(device)
 
     model.eval()

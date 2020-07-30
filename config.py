@@ -17,6 +17,7 @@ class DefaultConfig:
         # Training Config
         self._configs['batch_size'] = 4
         self._configs['num_workers'] = 0
+        self._configs['device_ids'] = [0, 1, 2, 3]
         self._configs['max_epoch'] = 10
         self._configs['lr'] = 0.01
         self._configs['lr_decay'] = 0.95
@@ -110,10 +111,18 @@ class DefaultConfig:
     @property
     def num_workers(self):
         return self._configs['num_workers']
-    
+
     @num_workers.setter
     def num_workers(self, value):
         self._configs['num_workers'] = value
+
+    @property
+    def device_ids(self):
+        return self._configs['device_ids']
+
+    @device_ids.setter
+    def device_ids(self, value):
+        self._configs['device_ids'] = value
 
     @property
     def evaluation_interval(self):
