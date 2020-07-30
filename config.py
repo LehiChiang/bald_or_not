@@ -18,7 +18,7 @@ class DefaultConfig:
         self._configs['batch_size'] = 4
         self._configs['num_workers'] = 0
         self._configs['device_ids'] = [0, 1, 2, 3]
-        self._configs['max_epoch'] = 10
+        self._configs['max_epoch'] = 100
         self._configs['lr'] = 0.01
         self._configs['lr_decay'] = 0.95
         self._configs['weight_decay'] = 1e-4
