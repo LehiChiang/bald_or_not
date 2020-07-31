@@ -73,7 +73,7 @@ def train(**kwargs):
         train_loss, loss_meter, correct = 0, 0, 0
 
         # train epoch
-        for batch_i, (data, label) in enumerate(tqdm(train_dataloader)):
+        for batch_i, (data, label, _) in enumerate(tqdm(train_dataloader)):
             input = Variable(data).to(device)
             target = Variable(label).to(device)
             optimizer.zero_grad()
