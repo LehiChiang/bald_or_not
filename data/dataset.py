@@ -35,7 +35,7 @@ class BaldDataset(data.Dataset):
         label = 0 if img_path.split('/')[-2] == 'Bald' else 1
         img_data = Image.open(img_path)
         img_data = self.transforms(img_data)
-        return img_data, label
+        return img_data, label, img_path.split('\\')[-1]
 
     def __len__(self):
         return len(self.image_list)
@@ -76,7 +76,6 @@ if __name__ == '__main__':
                              drop_last=False)
 
     test_data_iter = iter(test_loader)
-    img_data, img_label = next(test_data_iter)
-    print(img_label)
+    img_data, img_label, img_name = next(test_data_iter)
     test_data.images_stitching(img_data, 2)
 

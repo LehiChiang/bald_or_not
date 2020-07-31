@@ -59,7 +59,7 @@ def train(**kwargs):
     # optimizer & lr_scheduler & early_stopping
     optimizer = Adam(model.parameters(), lr=opt.lr, weight_decay=opt.weight_decay)
     lr_scheduler = ReduceLROnPlateau(optimizer, 'min', factor=0.1, patience=3, verbose=True)
-    early_stopping = EarlyStopping(patience=10, verbose=True, path='%s_checkpoint.pth' % opt.model)
+    early_stopping = EarlyStopping(patience=10, verbose=False, path='%s_final_checkpoint.pth' % opt.model)
 
     train_losses, valid_losses, avg_train_losses, avg_valid_losses = [], [], [], []
 
@@ -121,7 +121,7 @@ def train(**kwargs):
         avg_valid_losses.append(valid_loss)
 
         print('train_loss: %.3f, train_acc: %.3f' % (train_loss, train_acc))
-        print("val_loss: %.3f, val_acc: %.3f \n" % (valid_loss, val_acc))
+        print('val_loss: %.3f, val_acc: %.3f' % (valid_loss, val_acc))
 
         # clear lists to track next epoch
         train_losses.clear()
@@ -135,13 +135,13 @@ def train(**kwargs):
             print("Early stopping")
             break
 
-        # if epoch % opt.checkpoint_interval == 0:
-        #     model.save('%s_ckpt_%d.pth' % (opt.model, epoch))
+        if epoch % opt.checkpoint_interval == 0:
+            model.save('%s_ckpt_%d.pth' % (opt.model, epoch))
 
         print_separator()
 
         # load the last checkpoint with the best model
-        model.load('%s_checkpoint.pth' % opt.model)
+        model.load('%s_final_checkpoint.pth' % opt.model)
 
 
 if __name__ == '__main__':

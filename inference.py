@@ -1,11 +1,11 @@
 import torch as t
 import os
+import csv
 from torch.utils.data import DataLoader
 
 from config import DefaultConfig
 import models
 from data.dataset import BaldDataset
-
 
 def test():
     test_config = {
@@ -22,24 +22,26 @@ def test():
     test_data = BaldDataset(opt.test_data_root)
     test_dataloader = DataLoader(dataset=test_data,
                                  batch_size=opt.batch_size,
-                                 shuffle=True,
+                                 shuffle=False,
                                  num_workers=opt.num_workers,
                                  collate_fn=test_data.customized_collate_fn,
                                  drop_last=False)
 
     correct = 0
-    results = []
     with t.no_grad():
-        for inputs, target in test_dataloader:
+        f = open(opt.result_file, 'w+', encoding='utf-8', newline='')
+        csv_writer = csv.writer(f)
+        csv_writer.writerow(['image', 'detection_result', 'ground_truth'])
+        for inputs, target, img_names in test_dataloader:
             inputs = inputs.to(device)
             target = target.to(device)
-            print('target:', target.tolist())
             output = model(inputs)
             pred = t.relu(output).data.max(1)[1]
-            print('prediction:', pred.tolist())
             correct += pred.eq(target.data).sum()
-            print('------------------------------')
+            for img_name, dr, gt in zip(img_names, pred, target.data):
+                csv_writer.writerow([img_name, dr, gt])
         test_acc = correct.cpu().detach().numpy() * 1.0 / len(test_dataloader.dataset)
+        f.close()
         print("test_acc: %.3f \n" % test_acc)
 
 
