@@ -28,6 +28,7 @@ def test():
                                  drop_last=False)
 
     correct = 0
+    print('Start inference.....')
     with t.no_grad():
         f = open(opt.result_file, 'w+', encoding='utf-8', newline='')
         csv_writer = csv.writer(f)
@@ -39,7 +40,7 @@ def test():
             pred = t.relu(output).data.max(1)[1]
             correct += pred.eq(target.data).sum()
             for img_name, dr, gt in zip(img_names, pred, target.data):
-                csv_writer.writerow([img_name, dr, gt])
+                csv_writer.writerow([img_name, dr.item(), gt.item()])
         test_acc = correct.cpu().detach().numpy() * 1.0 / len(test_dataloader.dataset)
         f.close()
         print("test_acc: %.3f \n" % test_acc)
