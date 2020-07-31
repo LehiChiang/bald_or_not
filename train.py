@@ -51,7 +51,7 @@ def train(**kwargs):
     val_data = BaldDataset(opt.val_data_root)
     val_dataloader = DataLoader(dataset=val_data,
                                 batch_size=opt.batch_size,
-                                shuffle=False,
+                                shuffle=True,
                                 num_workers=opt.num_workers,
                                 collate_fn=val_data.customized_collate_fn,
                                 drop_last=False)
@@ -100,7 +100,7 @@ def train(**kwargs):
             loss_meter, correct = 0, 0
             with t.no_grad():
                 print('Validating on %d images:' % len(val_data))
-                for inputs, target in tqdm(val_dataloader):
+                for inputs, target, _ in tqdm(val_dataloader):
                     inputs = inputs.to(device)
                     target = target.to(device)
                     output = model(inputs)

@@ -9,7 +9,7 @@ from data.dataset import BaldDataset
 
 def test():
     test_config = {
-        'model_path': 'model_data/bald_weights.pth',
+        'model_path': 'model_data/resnet18_checkpoint.pth',
         'visualize': False
     }
     device = t.device("cuda" if t.cuda.is_available() else "cpu")
