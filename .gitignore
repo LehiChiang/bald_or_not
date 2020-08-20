@@ -6,3 +6,4 @@ output/*.csv
 */*.pth
 *.pth
 logs/
+data/bald/
