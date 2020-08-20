@@ -32,7 +32,10 @@ class BaldDataset(data.Dataset):
 
     def __getitem__(self, index):
         img_path = self.image_list[index]
-        label = 0 if img_path.split('/')[-2] == 'Bald' else 1
+        if img_path.split('\\')[-2] == 'Bald':
+            label = 0
+        else:
+            label = 1
         img_data = Image.open(img_path)
         img_data = self.transforms(img_data)
         return img_data, label, img_path.split('/')[-1]
@@ -74,7 +77,7 @@ if __name__ == '__main__':
                              num_workers=0,
                              collate_fn=test_data.customized_collate_fn,
                              drop_last=False)
-
     test_data_iter = iter(test_loader)
     img_data, img_label, img_name = next(test_data_iter)
+    print(img_name, img_label)
     test_data.images_stitching(img_data, 2)

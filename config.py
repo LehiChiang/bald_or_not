@@ -18,7 +18,7 @@ class DefaultConfig:
         self._configs['batch_size'] = 4
         self._configs['num_workers'] = 0
         self._configs['nums_of_classes'] = 2
-        self._configs['device_ids'] = [0, 1, 2, 3]
+        self._configs['device_ids'] = [0]
         self._configs['transfer_learning'] = True
         self._configs['freeze_epoch'] = 50
         self._configs['unfreeze_epoch'] = 50

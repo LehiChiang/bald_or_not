@@ -1,21 +1,23 @@
 import torch as t
+import torch.nn as nn
 import os
 import csv
 from torch.utils.data import DataLoader
+from models import resnet18
 
 from config import DefaultConfig
-import models
 from data.dataset import BaldDataset
 
 def test():
     test_config = {
-        'model_path': 'model_data/resnet18_final_checkpoint.pth',
+        'model_path': 'checkpoints/resnet18_final_checkpoint.pth',
         'visualize': False
     }
     device = t.device("cuda" if t.cuda.is_available() else "cpu")
     opt = DefaultConfig()
-    model = getattr(models, opt.model)().eval()
-    model.load(os.path.join(os.getcwd(), test_config['model_path']))
+    model = resnet18().eval()
+    model.fc = nn.Linear(model.fc.in_features, opt.nums_of_classes)
+    model.load_state_dict(t.load(os.path.join(os.getcwd(), test_config['model_path'])))
     model.to(device)
 
     # data

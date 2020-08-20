@@ -17,7 +17,7 @@ from data.dataset import BaldDataset
 from utils.pytorchtools import EarlyStopping
 from utils.utils import print_separator
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 def train(**kwargs):
@@ -63,11 +63,8 @@ def train(**kwargs):
                 loss = criterion(predict, target)
                 loss.backward()
                 optimizer.step()
-
                 train_losses.append(loss.item())
-
                 loss_meter += loss.item()
-
                 logits = t.relu(predict)
                 pred = logits.data.max(1)[1]
                 correct += pred.eq(target.data).sum()
