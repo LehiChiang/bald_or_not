@@ -3,3 +3,6 @@
 __pycache__/
 model_data/
 output/*.csv
+*/*.pth
+*.pth
+logs/

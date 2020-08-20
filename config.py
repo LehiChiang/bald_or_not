@@ -17,10 +17,13 @@ class DefaultConfig:
         # Training Config
         self._configs['batch_size'] = 4
         self._configs['num_workers'] = 0
+        self._configs['nums_of_classes'] = 2
         self._configs['device_ids'] = [0, 1, 2, 3]
-        self._configs['max_epoch'] = 100
+        self._configs['transfer_learning'] = True
+        self._configs['freeze_epoch'] = 50
+        self._configs['unfreeze_epoch'] = 50
         self._configs['lr'] = 0.01
-        self._configs['lr_decay'] = 0.95
+        self._configs['lr_decay'] = 0.1
         self._configs['weight_decay'] = 1e-4
         self._configs['checkpoint_interval'] = 1
         self._configs['evaluation_interval'] = 1
@@ -117,6 +120,14 @@ class DefaultConfig:
         self._configs['num_workers'] = value
 
     @property
+    def nums_of_classes(self):
+        return self._configs['nums_of_classes']
+
+    @nums_of_classes.setter
+    def nums_of_classes(self, value):
+        self._configs['nums_of_classes'] = value
+
+    @property
     def device_ids(self):
         return self._configs['device_ids']
 
@@ -133,12 +144,28 @@ class DefaultConfig:
         self._configs['evaluation_interval'] = value
 
     @property
-    def max_epoch(self):
-        return self._configs['max_epoch']
+    def transfer_learning(self):
+        return self._configs['transfer_learning']
 
-    @max_epoch.setter
-    def max_epoch(self, value):
-        self._configs['max_epoch'] = value
+    @transfer_learning.setter
+    def transfer_learning(self, value):
+        self._configs['transfer_learning'] = value
+
+    @property
+    def freeze_epoch(self):
+        return self._configs['freeze_epoch']
+
+    @freeze_epoch.setter
+    def freeze_epoch(self, value):
+        self._configs['freeze_epoch'] = value
+
+    @property
+    def unfreeze_epoch(self):
+        return self._configs['unfreeze_epoch']
+
+    @unfreeze_epoch.setter
+    def unfreeze_epoch(self, value):
+        self._configs['unfreeze_epoch'] = value
 
     @property
     def lr(self):

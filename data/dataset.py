@@ -8,9 +8,9 @@ from torchvision.utils import make_grid, save_image
 
 
 class BaldDataset(data.Dataset):
-    '''
+    """
     秃头数据集
-    '''
+    """
     def __init__(self, root, transforms=None):
         self.root = root
         self.transforms = transforms
@@ -41,14 +41,14 @@ class BaldDataset(data.Dataset):
         return len(self.image_list)
 
     def images_stitching(self, tensor, num_in_row, visualize=True, savefile=False):
-        '''
+        """
         图片拼接
         :param tensor: 图片Tensor
         :param num_in_row: 每行展示的图片数
         :param visualize: 是否将拼接结果展示
         :param savefile: 是否保存图片
         :return:
-        '''
+        """
         stitching = make_grid(tensor, num_in_row)
         img = self.to_img(stitching)
         if visualize:
@@ -57,11 +57,11 @@ class BaldDataset(data.Dataset):
             save_image(stitching, 'stitching.png')
 
     def customized_collate_fn(self, batch):
-        '''
+        """
         数据加载异常时的batch重新分配函数，将加载为None的对象过滤掉，返回可用的数据
         :param batch:
         :return: default_collate
-        '''
+        """
         batch = list(filter(lambda img: img[0] is not None, batch))
         return default_collate(batch)
 
@@ -78,4 +78,3 @@ if __name__ == '__main__':
     test_data_iter = iter(test_loader)
     img_data, img_label, img_name = next(test_data_iter)
     test_data.images_stitching(img_data, 2)
-
