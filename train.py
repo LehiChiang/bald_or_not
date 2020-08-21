@@ -139,7 +139,7 @@ def config_generator(config_data, opt):
 
 
 def model_generator(device, opt):
-    model = resnet18(pretrained=True)
+    model = resnet18()
     for param in model.parameters():
         param.requires_grad = False
     model.fc = nn.Linear(model.fc.in_features, opt.nums_of_classes)

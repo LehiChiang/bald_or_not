@@ -12,7 +12,7 @@ class DefaultConfig:
         self._configs['train_data_root'] = 'data/bald/Train'  # 训练集存放路径
         self._configs['test_data_root'] = 'data/bald/Test'  # 测试集存放路径
         self._configs['val_data_root'] = 'data/bald/Validation'  # 验证集存放路径
-        self._configs['load_model_path'] = None  # 'model_data/model.pth'加载预训练模型的路径，None表示不预训练
+        self._configs['load_model_path'] = 'model_data/resnet18-5c106cde.pth'  # 'model_data/model.pth'加载预训练模型的路径，None表示不预训练
 
         # Training Config
         self._configs['batch_size'] = 4
@@ -20,7 +20,7 @@ class DefaultConfig:
         self._configs['nums_of_classes'] = 2
         self._configs['device_ids'] = [0]
         self._configs['transfer_learning'] = True
-        self._configs['freeze_epoch'] = 50
+        self._configs['freeze_epoch'] = 10
         self._configs['unfreeze_epoch'] = 50
         self._configs['lr'] = 0.01
         self._configs['lr_decay'] = 0.1
