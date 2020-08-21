@@ -19,8 +19,9 @@ class DefaultConfig:
         self._configs['num_workers'] = 0
         self._configs['nums_of_classes'] = 2
         self._configs['device_ids'] = [0]
-        self._configs['transfer_learning'] = True
-        self._configs['freeze_epoch'] = 10
+        self._configs['freeze'] = True
+        self._configs['unfreeze'] = True
+        self._configs['freeze_epoch'] = 50
         self._configs['unfreeze_epoch'] = 50
         self._configs['lr'] = 0.01
         self._configs['lr_decay'] = 0.1
@@ -144,12 +145,20 @@ class DefaultConfig:
         self._configs['evaluation_interval'] = value
 
     @property
-    def transfer_learning(self):
-        return self._configs['transfer_learning']
+    def freeze(self):
+        return self._configs['freeze']
 
-    @transfer_learning.setter
-    def transfer_learning(self, value):
-        self._configs['transfer_learning'] = value
+    @freeze.setter
+    def freeze(self, value):
+        self._configs['freeze'] = value
+
+    @property
+    def unfreeze(self):
+        return self._configs['unfreeze']
+
+    @unfreeze.setter
+    def unfreeze(self, value):
+        self._configs['unfreeze'] = value
 
     @property
     def freeze_epoch(self):
