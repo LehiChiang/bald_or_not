@@ -20,12 +20,12 @@ from utils.utils import print_separator
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
-def train(**kwargs):
+def train():
     # initialization
     device = t.device("cuda:0" if t.cuda.is_available() else "cpu")
     opt = DefaultConfig()
     train_losses, valid_losses, avg_train_losses, avg_valid_losses = [], [], [], []
-    writer = SummaryWriter('logs', comment='resnet18')
+    writer = SummaryWriter('logs')
     criterion = nn.CrossEntropyLoss().to(device)
     config_data = [['Key', 'Value'], ['device', device]]
 
@@ -40,7 +40,7 @@ def train(**kwargs):
 
     # optimizer & lr_scheduler & early_stopping
     optimizer = Adam(model.fc.parameters(), lr=opt.lr, weight_decay=opt.weight_decay)
-    early_stopping = EarlyStopping(patience=10, verbose=False, path='checkpoints/%s_final_checkpoint.pth' % opt.model)
+    early_stopping = EarlyStopping(patience=5, verbose=False, path='checkpoints/%s_final_checkpoint.pth' % opt.model)
 
     print('Starting training on %d images:' % len(train_data))
 
